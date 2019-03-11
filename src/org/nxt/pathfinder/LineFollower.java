@@ -2,6 +2,7 @@ package org.nxt.pathfinder;
 
 
 import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import lejos.nxt.Motor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.subsumption.Arbitrator;
@@ -22,9 +23,10 @@ public class LineFollower {
 	    Behavior b2 = new DetectLine();
 	    Behavior[] behaviorList =
 	    {
-	      b1, b2
+	      b1
 	    };
 	    Arbitrator arbitrator = new Arbitrator(behaviorList);
+	    LCD.drawString("Line Follower :)",0,1);
 	    Button.waitForAnyPress();
 	    arbitrator.start();
 
