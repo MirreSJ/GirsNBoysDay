@@ -1,2 +1,6 @@
 **/src/*.class
 **/src/*.nxj
+
+\.metadata/
+
+*.class
