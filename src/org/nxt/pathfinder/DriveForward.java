@@ -13,8 +13,8 @@ public class DriveForward implements Behavior {
 	public DriveForward(CancelationToken cancelationToken, RegulatedMotor leftMotor, RegulatedMotor rightMotor) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-		leftMotor.setSpeed(400);
-	    rightMotor.setSpeed(400);
+		leftMotor.setSpeed(200);
+	    rightMotor.setSpeed(200);
 	    this.cancelationToken = cancelationToken;
 	}
 	

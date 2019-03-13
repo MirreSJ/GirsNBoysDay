@@ -18,11 +18,11 @@ public class LineFollower {
 	public static void main(String[] args) {
 
 		CancelationToken cancellationToken = new CancelationToken();
-	    //Behavior b1 = new DriveForward(cancellationToken, leftMotor, rightMotor);
-	    Behavior b2 = new DetectLine(cancellationToken);
+	    Behavior b1 = new DriveForward(cancellationToken, leftMotor, rightMotor);
+	    Behavior b2 = new DetectLine(cancellationToken, leftMotor, rightMotor);
 	    Behavior[] behaviorList =
 	    {
-	    		b2
+	    		b1, b2
 	    };
 	    Arbitrator arbitrator = new Arbitrator(behaviorList, true);
 	    LCD.drawString("Line Follower :)",0,1);
