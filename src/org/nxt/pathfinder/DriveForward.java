@@ -5,13 +5,14 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.subsumption.Behavior;
 
 public class DriveForward implements Behavior {
-
-	static RegulatedMotor leftMotor = Motor.A;
-	static RegulatedMotor rightMotor = Motor.C;	
+	private RegulatedMotor leftMotor;
+	private RegulatedMotor rightMotor;	
 	private boolean suppressed = false;
 	private CancelationToken cancelationToken;
 	
-	public DriveForward(CancelationToken cancelationToken) {
+	public DriveForward(CancelationToken cancelationToken, RegulatedMotor leftMotor, RegulatedMotor rightMotor) {
+		this.leftMotor = leftMotor;
+		this.rightMotor = rightMotor;
 		leftMotor.setSpeed(400);
 	    rightMotor.setSpeed(400);
 	    this.cancelationToken = cancelationToken;

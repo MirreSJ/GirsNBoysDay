@@ -1,28 +1,42 @@
 package org.nxt.pathfinder;
-
-import lejos.nxt.LightSensor;
+import lejos.nxt.LCD;
+import lejos.nxt.ColorSensor;
 import lejos.nxt.SensorPort;
-
 import lejos.robotics.subsumption.Behavior;
 
 public class DetectLine implements Behavior{
-	private LightSensor sensor;
+	private ColorSensor sensor;
+	final static int INTERVAL = 200; // milliseconds
+	private boolean suppressed = false;
+	private CancelationToken cancelationToken;
 	
-	public DetectLine(){
-		sensor = new LightSensor(SensorPort.S1);
+	public DetectLine(CancelationToken cancelationToken){
+		sensor = new ColorSensor(SensorPort.S1);
+		this.cancelationToken = cancelationToken;
 	}
 	
 	public void action() {
-		//suche die Linie
-		
+		while(!suppressed && HasLeftLine() && !cancelationToken.IsCancelationRequested()) {
+			LCD.clear();
+			LCD.drawString("Value: " + sensor.getLightValue(),0,1);
+			try {
+				Thread.sleep(INTERVAL);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}	
 	}
 
 	public void suppress(){
-		//Since  this is highest priority behavior, suppress will never be called.
+		suppressed = true;
 	}
 
 	public boolean takeControl() {
-		return sensor.readValue() > 40;
+		return HasLeftLine() && !cancelationToken.IsCancelationRequested();
+	}
+
+	private boolean HasLeftLine() {
+		return sensor.getLightValue() > 100;
 	}
 
 }

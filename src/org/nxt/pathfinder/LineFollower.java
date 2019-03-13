@@ -10,19 +10,21 @@ import lejos.robotics.subsumption.Behavior;
 
 public class LineFollower {
 
+	private static RegulatedMotor leftMotor = Motor.A;
+	private static RegulatedMotor rightMotor = Motor.C;	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 
 		CancelationToken cancellationToken = new CancelationToken();
-	    Behavior b1 = new DriveForward(cancellationToken);
-	    Behavior b2 = new DetectLine();
+	    //Behavior b1 = new DriveForward(cancellationToken, leftMotor, rightMotor);
+	    Behavior b2 = new DetectLine(cancellationToken);
 	    Behavior[] behaviorList =
 	    {
-	      b2
+	    		b2
 	    };
-	    Arbitrator arbitrator = new Arbitrator(behaviorList);
+	    Arbitrator arbitrator = new Arbitrator(behaviorList, true);
 	    LCD.drawString("Line Follower :)",0,1);
 	    Button.waitForAnyPress();
 	    arbitrator.start();
