@@ -1,31 +1,31 @@
 package org.nxt.pathfinder;
 
+import lejos.nxt.Motor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.subsumption.Behavior;
 
 public class DriveForward implements Behavior {
 
-	private RegulatedMotor leftMotor;
-	private RegulatedMotor rightMotor;
-	
+	static RegulatedMotor leftMotor = Motor.A;
+	static RegulatedMotor rightMotor = Motor.C;	
 	private boolean suppressed = false;
+	private CancelationToken cancelationToken;
 	
-	public DriveForward(RegulatedMotor leftMotor, RegulatedMotor rightMotor) {
-		this.leftMotor = leftMotor;
-		this.rightMotor = rightMotor;
-		
+	public DriveForward(CancelationToken cancelationToken) {
+		leftMotor.setSpeed(400);
+	    rightMotor.setSpeed(400);
+	    this.cancelationToken = cancelationToken;
 	}
 	
 	public boolean takeControl() {
-		return true;
-		
+		return !cancelationToken.IsCancelationRequested();		
 	}
 
 	public void action() {
 		suppressed = false;
 	    leftMotor.forward();
 	    rightMotor.forward();
-	    while (!suppressed)
+	    while (!suppressed && !cancelationToken.IsCancelationRequested())
 	    {
 	      Thread.yield(); //don't exit till suppressed
 	    }
@@ -35,8 +35,7 @@ public class DriveForward implements Behavior {
 	}
 
 	public void suppress() {
-		suppressed = true;
-		
+		suppressed = true;		
 	}
 
 }
