@@ -14,29 +14,15 @@ public class DetectLine implements Behavior{
 	final static int INTERVAL = 200; // milliseconds
 	private boolean suppressed = false;
 	private CancelationToken cancelationToken;
+
+	private DifferentialPilot pilot;	
 	
-	DifferentialPilot robot;
-	private RegulatedMotor leftMotor;
-	private RegulatedMotor rightMotor;
-	
-	public DetectLine(CancelationToken cancelationToken, RegulatedMotor leftMotor, RegulatedMotor rightMotor){
+	public DetectLine(CancelationToken cancelationToken, DifferentialPilot pilot){
 		sensor = new ColorSensor(SensorPort.S1);
 		this.cancelationToken = cancelationToken;
-		this.leftMotor = leftMotor;
-		this.rightMotor = rightMotor;
 		
-		PilotProps pp = new PilotProps();
-		try {
-			pp.loadPersistentValues();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "3"));
-		float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "12"));
-		boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
-
-		this.robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
+		
+		this.pilot = pilot;
 		
 	}
 	
@@ -68,16 +54,16 @@ public class DetectLine implements Behavior{
 		boolean hasLostLine = HasLostLine();
 		while(!cancelationToken.IsCancelationRequested() && stepCnt < steps && hasLostLine){
 			stepCnt++;
-			robot.rotate(step * -1);
+			pilot.rotate(step * -1);
 			hasLostLine = HasLostLine();
 		}
 		if(hasLostLine){
+			pilot.rotate(stepCnt * step);
 			stepCnt = 0;	
-			robot.rotate(stepCnt * step);
 		}
 		while(!cancelationToken.IsCancelationRequested() && stepCnt < steps && hasLostLine){
 			stepCnt++;
-			robot.rotate(step);
+			pilot.rotate(step);
 			hasLostLine = HasLostLine();
 		}
 	}
