@@ -1,6 +1,7 @@
 package org.nxt.pathfinder;
 import java.io.IOException;
 
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.SensorPort;
@@ -14,6 +15,7 @@ public class DetectLine implements Behavior{
 	final static int INTERVAL = 200; // milliseconds
 	private boolean suppressed = false;
 	private CancelationToken cancelationToken;
+	private int direction = -1;
 
 	private DifferentialPilot pilot;	
 	
@@ -32,13 +34,12 @@ public class DetectLine implements Behavior{
 			LCD.drawString("Value: " + sensor.getLightValue(),0,1);
 			
 			int maxDegree = 160;
-			int step = 10;
-			int degree = 10;
+			int step = 30;
+			int degree = step;
 			while(!cancelationToken.IsCancelationRequested() && degree < maxDegree && HasLostLine()){				
 				searchLineOnBothSides(degree);
 				degree += step;
-			}
-			
+			}			
 			try {
 				Thread.sleep(INTERVAL);
 			} catch (InterruptedException e) {
@@ -48,25 +49,37 @@ public class DetectLine implements Behavior{
 	}
 
 	private void searchLineOnBothSides(int degree) {
-		int step = 2;
+		LCD.clear();
+		LCD.drawString("Start: " +direction,0,1);
+		int step = 5;
 		int steps = degree / step;
 		int stepCnt = 0;
+		boolean found = false;
+		found = Search(stepCnt,steps, step);
+		if(!found){
+			stepCnt = 0;
+			direction = direction * -1;
+			Search(stepCnt,steps, step);
+		}
+		LCD.drawString("End: " +direction,0,2);
+	}
+	
+	private boolean Search(int stepCnt, int steps, int step){
 		boolean hasLostLine = HasLostLine();
 		while(!cancelationToken.IsCancelationRequested() && stepCnt < steps && hasLostLine){
 			stepCnt++;
-			pilot.rotate(step * -1);
+			pilot.rotate(step * direction);
 			hasLostLine = HasLostLine();
 		}
 		if(hasLostLine){
-			pilot.rotate(stepCnt * step);
-			stepCnt = 0;	
+			pilot.rotate(stepCnt * step * direction * -1);
+		}else{
+			pilot.rotate(step * direction);
 		}
-		while(!cancelationToken.IsCancelationRequested() && stepCnt < steps && hasLostLine){
-			stepCnt++;
-			pilot.rotate(step);
-			hasLostLine = HasLostLine();
-		}
+		return !hasLostLine;
 	}
+	
+	
 
 	public void suppress(){
 		suppressed = true;

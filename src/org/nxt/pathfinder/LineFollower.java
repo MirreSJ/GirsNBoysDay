@@ -23,12 +23,7 @@ public class LineFollower {
 
 		CancelationToken cancellationToken = new CancelationToken();
 		PilotProps pp = new PilotProps();
-		try {
-			pp.loadPersistentValues();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "3"));
 		float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "12"));
 		boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
@@ -38,12 +33,13 @@ public class LineFollower {
 	    Behavior b2 = new DetectLine(cancellationToken, pilot);
 	    Behavior[] behaviorList =
 	    {
-	    		b1, b2
+	    	b1, b2
 	    };
 	    Arbitrator arbitrator = new Arbitrator(behaviorList, true);
 	    LCD.drawString("Line Follower :)",0,1);
 	    Button.waitForAnyPress();
 	    arbitrator.start();
+		
 
 	}
 

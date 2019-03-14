@@ -10,6 +10,7 @@ public class DriveForward implements Behavior {
 	
 	public DriveForward(CancelationToken cancelationToken, DifferentialPilot pilot) {
 	    this.cancelationToken = cancelationToken;
+	    this.pilot = pilot; 
 	}
 	
 	public boolean takeControl() {
