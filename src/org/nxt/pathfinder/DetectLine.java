@@ -45,7 +45,13 @@ public class DetectLine implements Behavior{
 			LCD.clear();
 			LCD.drawString("Value: " + sensor.getLightValue(),0,1);
 			
-			searchLineOnLeftSide(10);
+			int maxDegree = 160;
+			int step = 10;
+			int degree = 10;
+			while(!cancelationToken.IsCancelationRequested() && degree < maxDegree && HasLostLine()){				
+				searchLineOnBothSides(degree);
+				degree += step;
+			}
 			
 			try {
 				Thread.sleep(INTERVAL);
@@ -55,9 +61,25 @@ public class DetectLine implements Behavior{
 		}
 	}
 
-	private void searchLineOnLeftSide(int degree) {
-		
-		robot.rotate(-20);
+	private void searchLineOnBothSides(int degree) {
+		int step = 2;
+		int steps = degree / step;
+		int stepCnt = 0;
+		boolean hasLostLine = HasLostLine();
+		while(!cancelationToken.IsCancelationRequested() && stepCnt < steps && hasLostLine){
+			stepCnt++;
+			robot.rotate(step * -1);
+			hasLostLine = HasLostLine();
+		}
+		if(hasLostLine){
+			stepCnt = 0;	
+			robot.rotate(stepCnt * step);
+		}
+		while(!cancelationToken.IsCancelationRequested() && stepCnt < steps && hasLostLine){
+			stepCnt++;
+			robot.rotate(step);
+			hasLostLine = HasLostLine();
+		}
 	}
 
 	public void suppress(){
